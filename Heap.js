@@ -1,3 +1,5 @@
+var debug = false;
+
 // Implementation of a Max binary Heap using an array
 // Position 0 = holds the index to 
 var Heap = function(comparatorFn) {
@@ -9,10 +11,16 @@ var Heap = function(comparatorFn) {
 
 	this.parentIndex = function(index) {
 		if (index === 0) {
-			console.log("Error. Index 0 is not used to store items.");
+			if (debug) {
+				console.log("Error. Index 0 is not used to store items.");
+			}
+			
 			return null;
 		} else if (index === 1) {
-			console.log("Error. Root has no parent.");
+			if (debug) {
+				console.log("Error. Root has no parent.");
+			}
+
 			return null;
 		} else {
 			return Math.floor(index/2);
@@ -21,7 +29,10 @@ var Heap = function(comparatorFn) {
 
 	this.leftChildIndex = function(index) {
 		if (index*2 > this.size()) {
-			console.log("No left child at index " + index + ".");
+			if (debug) {
+				console.log("No left child at index " + index + ".");
+			}
+
 			return null;
 		} else {
 			return index*2;
@@ -30,7 +41,10 @@ var Heap = function(comparatorFn) {
 
 	this.rightChildIndex = function(index) {
 		if (index*2+1 > this.size()) {
-			console.log("No right child at index " + index + ".");
+			if (debug) {
+				console.log("No right child at index " + index + ".");
+			}
+
 			return null;
 		} else {
 			return index*2+1;
@@ -56,7 +70,10 @@ var Heap = function(comparatorFn) {
 			this.deleteMax();
 			return maxItem;
 		} else {
-			console.log("There's nothing in the heap.");
+			if (debug) {
+				console.log("There's nothing in the heap.");
+			}
+
 			return null;
 		}
 	}
@@ -105,7 +122,10 @@ var Heap = function(comparatorFn) {
 	}
 
 	this.print = function() {
-		console.log("Elements: " + elements);
+		if (debug) {
+			console.log("Elements: " + elements);
+		}
+
 		var arr = new Array();
 		for (var i = 1; i <= this.size(); i++) {
 			arr.push(elements[i]);
@@ -190,7 +210,10 @@ var Heap = function(comparatorFn) {
 		if (!this.isEmpty()) {
 			return elements[1];
 		} else {
-			console.log("There's nothing in the heap.");
+			if (debug) {
+				console.log("There's nothing in the heap.");
+			}
+
 			return null;
 		}
 	}
@@ -205,7 +228,10 @@ var Heap = function(comparatorFn) {
 			// Fix heap property
 			this.bubbleDown();
 		} else {
-			console.log("There's nothing in the heap.");
+			if (debug) {
+				console.log("There's nothing in the heap.");
+			}
+
 			return null;
 		}
 	}
@@ -213,7 +239,9 @@ var Heap = function(comparatorFn) {
 	this.increaseKey = function(itemToUpdate, newValue) {
 		var itemIndex = this.findItemIndex(itemToUpdate);
 		if (itemIndex === null) {
-			console.log("No such item");
+			if (debug) {
+				console.log("No such item");
+			}
 		} else {
 			elements[itemIndex] = newValue;
 		}
