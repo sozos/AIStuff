@@ -1,0 +1,1 @@
+Implement things learnt in A.I. courses
