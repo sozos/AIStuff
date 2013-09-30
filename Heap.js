@@ -78,46 +78,57 @@ var Heap = function(comparatorFn) {
 		}
 	}
 
+	this.remove = function(item) {
+		var itemIndex = this.findItemIndex(item);
+		if (itemIndex !== null) {
+			elements[itemIndex] = elements[this.size()];
+			elements[0]--;
+			this.bubbleDown(itemIndex);
+		}
+	}
+
 	// Returns null if item is not present
 	this.findItemIndex = function(item) {
-		function search(item, searchIndex) {
-			var leftResult = null;
-			var rightResult = null;
-			if (searchIndex < this.size()) {
-				if (comparatorFn(item, elements[searchIndex]) === 0) {
-					return searchIndex;
-				}
+		return this.findItem(item, 1);
+	}
 
-				if (comparatorFn(item, elements[searchIndex]) === 1) {
-					// item > elements[searchIndex]
-					return null;
-				}
+	// Returns null if item is not present
+	this.findItem = function(item, searchIndex) {
+		var leftResult = null;
+		var rightResult = null;
+		if (searchIndex < this.size()) {
+			if (comparatorFn(item, elements[searchIndex]) === 0) {
+				return searchIndex;
+			}
 
-				// Check left subtree
-				if (leftChildIndex(searchIndex) != null) {
-					leftResult = search(item, leftChildIndex(searchIndex));
-				}
-
-				// Check right subtree
-				if (rightChildIndex(searchIndex) != null) {
-					rightResult = search(item, rightChildIndex(searchIndex));
-				}
-
-				// Assuming items are unique
-				if (leftResult !== null) {
-					return leftResult;
-				} else {
-					return rightResult;
-				}
-			} else {
+			if (comparatorFn(item, elements[searchIndex]) === 1) {
+				// item > elements[searchIndex]
 				return null;
 			}
+
+			// Check left subtree
+			if (this.leftChildIndex(searchIndex) != null) {
+				leftResult = this.findItem(item, this.leftChildIndex(searchIndex));
+			}
+
+			// Check right subtree
+			if (this.rightChildIndex(searchIndex) != null) {
+				rightResult = this.findItem(item, this.rightChildIndex(searchIndex));
+			}
+
+			// Assuming items are unique
+			if (leftResult !== null) {
+				return leftResult;
+			} else {
+				return rightResult;
+			}
+		} else {
+			return null;
 		}
-		return search(item, 1);
 	}
 
 	this.contains = function(item) {
-		var index = findItemIndex(item);
+		var index = this.findItemIndex(item);
 		return (index !== null);
 	}
 
@@ -134,8 +145,8 @@ var Heap = function(comparatorFn) {
 	}
 
 	// Call this after insertion to maintain heap property
-	this.bubbleUp = function() {
-		var currentIndex = this.size();
+	this.bubbleUp = function(startIndex) {
+		var currentIndex = startIndex;
 		var itemToBubble = elements[currentIndex];
 
 		while (currentIndex > 1) {
@@ -155,8 +166,8 @@ var Heap = function(comparatorFn) {
 	}
 
 	// Call this after deletion to maintain heap property
-	this.bubbleDown = function() {
-		var currentIndex = 1;
+	this.bubbleDown = function(startIndex) {
+		var currentIndex = startIndex;
 		var itemToBubble = elements[currentIndex];
 
 		while (currentIndex < this.size()) {
@@ -196,6 +207,7 @@ var Heap = function(comparatorFn) {
 	// Implementation of operations mentioned in:
 	// http://en.wikipedia.org/wiki/Heap_(data_structure)
 	// [createHeap is kinda redundant]
+	// [increaseKey is asymptotically the same as "Delete + Insert"]
 
 	// Overwrites old heap
 	this.heapify = function(inputArray) {
@@ -226,7 +238,7 @@ var Heap = function(comparatorFn) {
 			elements[0]--; // Reduce size by 1
 
 			// Fix heap property
-			this.bubbleDown();
+			this.bubbleDown(1);
 		} else {
 			if (debug) {
 				console.log("There's nothing in the heap.");
@@ -236,24 +248,13 @@ var Heap = function(comparatorFn) {
 		}
 	}
 
-	this.increaseKey = function(itemToUpdate, newValue) {
-		var itemIndex = this.findItemIndex(itemToUpdate);
-		if (itemIndex === null) {
-			if (debug) {
-				console.log("No such item");
-			}
-		} else {
-			elements[itemIndex] = newValue;
-		}
-	}
-
 	this.insert = function(newItem) {
 		// Add item to back of heap
 		elements[0]++; // Increase size by 1
 		elements[this.size()] = newItem;
 
 		// Fix heap property
-		this.bubbleUp();
+		this.bubbleUp(this.size());
 	}
 
 	this.merge = function(otherHeap) {
